@@ -1,7 +1,7 @@
 galaxy_info:
   role_name: nvidia_docker
   author: Luke Yeager
-  description: Install docker and nvidia-docker
+  description: Install nvidia-docker
   license: 3-Clause BSD
   min_ansible_version: 2.4
 

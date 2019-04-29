@@ -1,1 +1,1 @@
-An ansible role to install docker and nvidia-docker.
+An ansible role to install nvidia-docker.
