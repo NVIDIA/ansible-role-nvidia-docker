@@ -9,8 +9,8 @@
 
 - name: add repo
   get_url:
-    url: "{{ nvdocker_repo_base_url }}/{{ rhel_repo_dist_name }}/{{ rhel_repo_file_name }}"
-    dest: "{{ rhel_repo_file_path }}"
+    url: "{{ nvidia_docker_repo_base_url }}/{{ _rhel_repo_dist_name }}/{{ _rhel_repo_file_name }}"
+    dest: "{{ _rhel_repo_file_path }}"
     mode: 0644
     owner: root
     group: root

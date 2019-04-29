@@ -1,10 +1,14 @@
-# Package version pinning
-nvidia_docker2_package_version: ''
 nvidia_container_runtime_package_version: ''
 
-# Setting reference: https://docs.nvidia.com/deeplearning/dgx/user-guide/index.html
 docker_daemon_json:
-  bip: 192.168.99.1/24
+  # Set default runtime (required for kubernetes)
+  runtimes:
+    nvidia:
+      path: /usr/bin/nvidia-container-runtime
+      runtimeArgs: []
+  default-runtime: nvidia
+
+  # Reference for these limits: https://docs.nvidia.com/deeplearning/dgx/user-guide/index.html
   default-shm-size: 1G
   default-ulimits:
     memlock:
@@ -15,13 +19,11 @@ docker_daemon_json:
       name: stack
       hard: 67108864
       soft: 67108864
-  default-runtime: nvidia
-  runtimes:
-    nvidia:
-      path: /usr/bin/nvidia-container-runtime
-      runtimeArgs: []
 
-nvdocker_repo_base_url: "https://nvidia.github.io/nvidia-docker"
-nvdocker_gpg_path: "{{ nvdocker_repo_base_url }}/gpgkey"
+  # Docker's default subnet is 172.17.0.0/16
+  # Pick a smaller subnet, which is also less likely to conflict with corporate addresses.
+  bip: 192.168.99.1/24
 
+nvidia_docker_repo_base_url: "https://nvidia.github.io/nvidia-docker"
+nvidia_docker_repo_gpg_url: "{{ nvidia_docker_repo_base_url }}/gpgkey"
 nvidia_docker_wrapper_url: https://raw.githubusercontent.com/NVIDIA/nvidia-docker/master/nvidia-docker

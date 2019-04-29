@@ -10,13 +10,13 @@
 
 - name: add key
   apt_key:
-    url: "{{ nvdocker_gpg_path }}"
+    url: "{{ nvidia_docker_repo_gpg_url }}"
     state: present
 
 - name: add repo
   get_url:
-    url: "{{ nvdocker_repo_base_url }}/{{ ubuntu_repo_dist_name }}/{{ ubuntu_repo_file_name }}"
-    dest: "{{ ubuntu_repo_file_path }}"
+    url: "{{ nvidia_docker_repo_base_url }}/{{ _ubuntu_repo_dist_name }}/{{ _ubuntu_repo_file_name }}"
+    dest: "{{ _ubuntu_repo_file_path }}"
     mode: 0644
     owner: root
     group: root
