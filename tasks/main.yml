@@ -4,10 +4,6 @@
     msg: "distro {{ ansible_facts['distribution'] }} not supported"
   when: ansible_facts['distribution'] != 'Ubuntu' and ansible_os_family != 'RedHat'
 
-- name: check that docker is installed
-  command: which docker
-  changed_when: false
-
 - name: ubuntu pre-install tasks
   include_tasks: ubuntu-pre-install.yml
   when: ansible_distribution == 'Ubuntu'
