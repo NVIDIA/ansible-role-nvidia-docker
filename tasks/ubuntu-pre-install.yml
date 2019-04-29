@@ -26,5 +26,4 @@
     name: nvidia-container-runtime
     state: present
     update_cache: yes
-  register: install_packages
-
+  notify: reload docker

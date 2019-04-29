@@ -23,8 +23,11 @@
     owner: root
     group: root
     mode: 0644
-  register: daemon_json
+  notify: reload docker
 
+# We could use the "nvidia-docker2" package to install this wrapper for us.
+# Instead, we grab the wrapper directly to avoid packaging issues stemming from
+#   docker version pinning in the nvidia-docker2 package.
 - name: grab nvidia-docker wrapper
   get_url:
     url: "{{ nvidia_docker_wrapper_url }}"
@@ -32,9 +35,3 @@
     mode: 0755
     owner: root
     group: root
-
-- name: reload docker service
-  service:
-    name: docker
-    state: reloaded
-  when: install_packages.changed or daemon_json.changed
