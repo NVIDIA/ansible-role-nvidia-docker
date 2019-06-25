@@ -12,6 +12,12 @@
   include_tasks: redhat-pre-install.yml
   when: ansible_os_family == 'RedHat'
 
+- name: create /etc/docker
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+
 - name: set docker daemon configuration
   copy:
     content: "{{ docker_daemon_json | to_nice_json }}"
