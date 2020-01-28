@@ -15,7 +15,7 @@
     mode: "0755"
 
 - name: re-gather facts
-  setup:
+  setup: filter=ansible_local
           
 - name: check distro
   fail:
