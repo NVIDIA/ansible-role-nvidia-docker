@@ -1,4 +1,22 @@
 ---
+- name: ensure facts directory exists
+  file:
+    path: "/etc/ansible/facts.d"
+    state: directory
+    owner: "root"
+    group: "root"
+
+- name: setup custom facts
+  copy:
+    src: "etc/ansible/facts.d/nv_os_release.fact"
+    dest: "/etc/ansible/facts.d/nv_os_release.fact"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: re-gather facts
+  setup:
+          
 - name: check distro
   fail:
     msg: "distro {{ ansible_facts['distribution'] }} not supported"
