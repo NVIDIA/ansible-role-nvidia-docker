@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# The URL for the nvidia-docker repository depends on the Linux distribution
+# name and version, according to the contents of /etc/os-release:
+#
+#  distribution=$(. /etc/os-release;echo $ID_VERSION_ID)
+#  url="https://nvidia.github.io/nvidia-docker/${distribution}/"
+#
+# Unfortunately, the results of this particular check aren't found in the
+# existing Ansible facts, so we'll define a custom fact to get this
+# distribution name.
+
+set -eu
+
+source /etc/os-release
+
+nv_os_release="${ID}${VERSION_ID}"
+
+cat <<EOF
+{
+  "nv_os_release": "${nv_os_release}"
+}
+EOF
