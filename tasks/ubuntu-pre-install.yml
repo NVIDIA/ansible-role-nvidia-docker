@@ -13,6 +13,7 @@
     url: "{{ nvidia_docker_repo_gpg_url }}"
     state: present
   when: nvidia_docker_add_repo
+  environment: "{{proxy_env if proxy_env is defined else {}}}"
 
 - name: add repo
   get_url:
@@ -22,6 +23,7 @@
     owner: root
     group: root
   when: nvidia_docker_add_repo
+  environment: "{{proxy_env if proxy_env is defined else {}}}"
 
 - name: install packages
   apt:
@@ -29,3 +31,4 @@
     state: present
     update_cache: yes
   notify: reload docker
+  environment: "{{proxy_env if proxy_env is defined else {}}}"
