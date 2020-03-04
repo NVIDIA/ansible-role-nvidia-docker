@@ -20,10 +20,6 @@ docker_daemon_json:
       hard: 67108864
       soft: 67108864
 
-  # Docker's default subnet is 172.17.0.0/16
-  # Pick a smaller subnet, which is also less likely to conflict with corporate addresses.
-  bip: 192.168.99.1/24
-
 nvidia_docker_repo_base_url: "https://nvidia.github.io/nvidia-docker"
 nvidia_docker_repo_gpg_url: "{{ nvidia_docker_repo_base_url }}/gpgkey"
 nvidia_docker_wrapper_url: https://raw.githubusercontent.com/NVIDIA/nvidia-docker/master/nvidia-docker
