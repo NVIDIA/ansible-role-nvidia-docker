@@ -3,3 +3,4 @@
   service:
     name: docker
     state: reloaded
+  when: not nvidia_docker_skip_docker_reload
