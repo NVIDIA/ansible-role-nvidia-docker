@@ -16,14 +16,12 @@
   environment: "{{proxy_env if proxy_env is defined else {}}}"
 
 - name: add repo
-  get_url:
-    url: "{{ nvidia_docker_repo_base_url }}/{{ ansible_local['nv_os_release']['nv_os_release'] }}/{{ _ubuntu_repo_file_name }}"
-    dest: "{{ _ubuntu_repo_file_path }}"
-    mode: 0644
-    owner: root
-    group: root
+  apt_repository:
+    repo: "{{ item }}"
+    state: "present"
   when: nvidia_docker_add_repo
   environment: "{{proxy_env if proxy_env is defined else {}}}"
+  with_items: "{{ nvidia_docker_apt_repo_lines }}"
 
 - name: install packages
   apt:
