@@ -23,5 +23,5 @@
     name: nvidia-container-runtime
     state: present
     update_cache: yes
-  notify: reload docker
+  notify: restart docker
   environment: "{{proxy_env if proxy_env is defined else {}}}"

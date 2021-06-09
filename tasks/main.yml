@@ -43,7 +43,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload docker
+  notify: restart docker
 
 # We could use the "nvidia-docker2" package to install this wrapper for us.
 # Instead, we grab the wrapper directly to avoid packaging issues stemming from

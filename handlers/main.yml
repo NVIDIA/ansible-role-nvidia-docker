@@ -1,6 +1,6 @@
 ---
-- name: reload docker
+- name: restart docker
   service:
     name: docker
-    state: reloaded
-  when: not nvidia_docker_skip_docker_reload
+    state: restarted
+  when: not nvidia_docker_skip_docker_restart
