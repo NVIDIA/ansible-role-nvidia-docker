@@ -5,6 +5,7 @@
     state: directory
     owner: "root"
     group: "root"
+  become: true
 
 - name: setup custom facts
   copy:
@@ -13,6 +14,7 @@
     owner: "root"
     group: "root"
     mode: "0755"
+  become: true
 
 - name: re-gather facts
   setup: filter=ansible_local
@@ -35,6 +37,7 @@
     path: /etc/docker
     state: directory
     mode: '0755'
+  become: true
 
 - name: set docker daemon configuration
   copy:
@@ -43,6 +46,7 @@
     owner: root
     group: root
     mode: 0644
+  become: true
   notify: restart docker
 
 # We could use the "nvidia-docker2" package to install this wrapper for us.
@@ -55,5 +59,6 @@
     mode: 0755
     owner: root
     group: root
+  become: true
   environment: "{{proxy_env if proxy_env is defined else {}}}"
 
