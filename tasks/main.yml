@@ -56,4 +56,5 @@
     owner: root
     group: root
   environment: "{{proxy_env if proxy_env is defined else {}}}"
+  when: nvidia_docker_install_wrapper
 
