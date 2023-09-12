@@ -4,7 +4,7 @@ galaxy_info:
   company: NVIDIA
   description: Install nvidia-docker
   license: 3-Clause BSD
-  min_ansible_version: 2.0
+  min_ansible_version: "2.0"
 
   platforms:
     - name: Ubuntu

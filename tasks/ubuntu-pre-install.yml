@@ -1,34 +1,37 @@
 ---
-- name: remove packages
-  apt:
+- name: Remove packages
+  ansible.builtin.apt:
     name:
       - nvidia-docker
       - nvidia-docker2
     state: absent
-    autoremove: yes
-    purge: yes
+    autoremove: true
+    purge: true
+  become: true
 
-- name: add key
-  apt_key:
+- name: Add key
+  ansible.builtin.apt_key:
     url: "{{ nvidia_docker_repo_gpg_url }}"
     state: present
   when: nvidia_docker_add_repo
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
 
-- name: add repo
-  get_url:
+- name: Add repo
+  ansible.builtin.get_url:
     url: "{{ nvidia_docker_repo_base_url }}/{{ ansible_local['nv_os_release']['nv_os_release'] }}/{{ _ubuntu_repo_file_name }}"
     dest: "{{ _ubuntu_repo_file_path }}"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   when: nvidia_docker_add_repo
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
-- name: install packages
-  apt:
+- name: Install packages
+  ansible.builtin.apt:
     name: nvidia-container-runtime
     state: present
-    update_cache: yes
+    update_cache: true
   notify: restart docker
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
