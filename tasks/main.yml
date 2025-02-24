@@ -1,60 +1,67 @@
 ---
-- name: ensure facts directory exists
-  file:
+- name: Ensure facts directory exists
+  ansible.builtin.file:
     path: "/etc/ansible/facts.d"
     state: directory
     owner: "root"
     group: "root"
+    mode: "755"
+  become: true
 
-- name: setup custom facts
-  copy:
+- name: Setup custom facts
+  ansible.builtin.copy:
     src: "etc/ansible/facts.d/nv_os_release.fact"
     dest: "/etc/ansible/facts.d/nv_os_release.fact"
     owner: "root"
     group: "root"
     mode: "0755"
+  become: true
 
-- name: re-gather facts
-  setup: filter=ansible_local
-          
-- name: check distro
-  fail:
+- name: Re-gather facts
+  ansible.builtin.setup:
+    filter:
+      - ansible_local
+
+- name: Check distro
+  ansible.builtin.fail:
     msg: "distro {{ ansible_facts['distribution'] }} not supported"
   when: ansible_facts['distribution'] != 'Ubuntu' and ansible_os_family != 'RedHat'
 
-- name: ubuntu pre-install tasks
-  include_tasks: ubuntu-pre-install.yml
+- name: Ubuntu pre-install tasks
+  ansible.builtin.include_tasks: ubuntu-pre-install.yml
   when: ansible_distribution == 'Ubuntu'
 
-- name: redhat family pre-install tasks
-  include_tasks: redhat-pre-install.yml
+- name: Redhat family pre-install tasks
+  ansible.builtin.include_tasks: redhat-pre-install.yml
   when: ansible_os_family == 'RedHat'
 
-- name: create /etc/docker
-  file:
+- name: Create /etc/docker
+  ansible.builtin.file:
     path: /etc/docker
     state: directory
     mode: '0755'
+  become: true
 
-- name: set docker daemon configuration
-  copy:
+- name: Set docker daemon configuration
+  ansible.builtin.copy:
     content: "{{ docker_daemon_json | to_nice_json }}"
     dest: /etc/docker/daemon.json
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: restart docker
+  become: true
 
 # We could use the "nvidia-docker2" package to install this wrapper for us.
 # Instead, we grab the wrapper directly to avoid packaging issues stemming from
 #   docker version pinning in the nvidia-docker2 package.
-- name: grab nvidia-docker wrapper
-  get_url:
+- name: Grab nvidia-docker wrapper
+  ansible.builtin.get_url:
     url: "{{ nvidia_docker_wrapper_url }}"
     dest: /usr/local/bin/nvidia-docker
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
   when: nvidia_docker_install_wrapper
-
+  become: true
