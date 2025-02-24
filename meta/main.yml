@@ -2,19 +2,24 @@ galaxy_info:
   role_name: nvidia_docker
   author: Luke Yeager
   company: NVIDIA
-  description: Install nvidia-docker
+  description: Install libnvidia-container and nvidia-container-toolkit
   license: 3-Clause BSD
   min_ansible_version: "2.0"
 
   platforms:
     - name: Ubuntu
       versions:
-        - 'xenial'
-        - 'bionic'
+        - 'focal'
+        - 'jammy'
+        - 'noble'
     - name: EL
       versions:
-        - '7'
+        - '8'
+        - '9'
 
   galaxy_tags:
     - 'nvidia'
     - 'docker'
+    - 'libnvidia-container'
+    - 'nvidia-container-toolkit'
+    - 'nvidia-docker'

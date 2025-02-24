@@ -1,67 +1,63 @@
 ---
-- name: Ensure facts directory exists
-  ansible.builtin.file:
-    path: "/etc/ansible/facts.d"
-    state: directory
-    owner: "root"
-    group: "root"
-    mode: "755"
-  become: true
 
-- name: Setup custom facts
-  ansible.builtin.copy:
-    src: "etc/ansible/facts.d/nv_os_release.fact"
-    dest: "/etc/ansible/facts.d/nv_os_release.fact"
-    owner: "root"
-    group: "root"
-    mode: "0755"
-  become: true
-
-- name: Re-gather facts
-  ansible.builtin.setup:
-    filter:
-      - ansible_local
-
-- name: Check distro
-  ansible.builtin.fail:
-    msg: "distro {{ ansible_facts['distribution'] }} not supported"
-  when: ansible_facts['distribution'] != 'Ubuntu' and ansible_os_family != 'RedHat'
-
-- name: Ubuntu pre-install tasks
-  ansible.builtin.include_tasks: ubuntu-pre-install.yml
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Redhat family pre-install tasks
-  ansible.builtin.include_tasks: redhat-pre-install.yml
-  when: ansible_os_family == 'RedHat'
-
-- name: Create /etc/docker
-  ansible.builtin.file:
-    path: /etc/docker
-    state: directory
-    mode: '0755'
-  become: true
-
-- name: Set docker daemon configuration
-  ansible.builtin.copy:
-    content: "{{ docker_daemon_json | to_nice_json }}"
-    dest: /etc/docker/daemon.json
-    owner: root
-    group: root
-    mode: "0644"
-  notify: restart docker
-  become: true
-
-# We could use the "nvidia-docker2" package to install this wrapper for us.
-# Instead, we grab the wrapper directly to avoid packaging issues stemming from
-#   docker version pinning in the nvidia-docker2 package.
-- name: Grab nvidia-docker wrapper
-  ansible.builtin.get_url:
-    url: "{{ nvidia_docker_wrapper_url }}"
-    dest: /usr/local/bin/nvidia-docker
-    mode: "0755"
-    owner: root
-    group: root
+- name: Add NVIDIA libnvidia-container GPG key (APT)
+  ansible.builtin.apt_key:
+    url: "{{ nvidia_docker_repo_gpg_url }}"
+    state: present
+  when: ansible_os_family == "Debian"
   environment: "{{ proxy_env if proxy_env is defined else {} }}"
-  when: nvidia_docker_install_wrapper
+  become: true
+
+- name: Fetch NVIDIA libnvidia-container APT repo file
+  ansible.builtin.get_url:
+    url: "{{ nvidia_docker_repo_list_url }}"
+    dest: /etc/apt/sources.list.d/nvidia-container-toolkit.list
+    mode: "0644"
+  when: ansible_os_family == "Debian"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
+
+- name: Install NVIDIA container toolkit (APT)
+  ansible.builtin.apt:
+    name: nvidia-container-toolkit
+    state: present
+  when: ansible_os_family == "Debian"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
+
+- name: Import NVIDIA libnvidia-container GPG key (RPM)
+  ansible.builtin.rpm_key:
+    key: "{{ nvidia_docker_repo_gpg_url }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
+
+- name: Fetch NVIDIA libnvidia-container YUM repo file
+  ansible.builtin.get_url:
+    url: "{{ nvidia_docker_repo_repo_url }}"
+    dest: /etc/yum.repos.d/nvidia-container-toolkit.repo
+    mode: "0644"
+  when: ansible_os_family == "RedHat"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
+
+- name: Install NVIDIA container toolkit (YUM)
+  ansible.builtin.yum:
+    name: nvidia-container-toolkit
+    state: present
+  when: ansible_os_family == "RedHat"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
+
+- name: Configure Docker daemon for NVIDIA runtime
+  command: nvidia-ctk runtime configure --runtime=docker
+  notify: Restart Docker
   become: true

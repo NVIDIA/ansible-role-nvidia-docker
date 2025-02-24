@@ -1,5 +1,0 @@
-_ubuntu_repo_file_name: "nvidia-docker.list"
-_ubuntu_repo_file_path: "/etc/apt/sources.list.d/{{ _ubuntu_repo_file_name }}"
-
-_rhel_repo_file_name: "nvidia-docker.repo"
-_rhel_repo_file_path: "/etc/yum.repos.d/{{ _rhel_repo_file_name }}"

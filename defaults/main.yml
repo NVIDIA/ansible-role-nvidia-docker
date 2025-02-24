@@ -1,30 +1,8 @@
-nvidia_container_runtime_package_version: ''
-
-docker_daemon_json:
-  # Set default runtime (required for kubernetes)
-  runtimes:
-    nvidia:
-      path: /usr/bin/nvidia-container-runtime
-      runtimeArgs: []
-  default-runtime: nvidia
-
-  # Reference for these limits: https://docs.nvidia.com/deeplearning/dgx/user-guide/index.html
-  default-shm-size: 1G
-  default-ulimits:
-    memlock:
-      name: memlock
-      hard: -1
-      soft: -1
-    stack:
-      name: stack
-      hard: 67108864
-      soft: 67108864
-
-nvidia_docker_repo_base_url: "https://nvidia.github.io/nvidia-docker"
+nvidia_docker_repo_base_url: "https://nvidia.github.io/libnvidia-container"
 nvidia_docker_repo_gpg_url: "{{ nvidia_docker_repo_base_url }}/gpgkey"
-nvidia_docker_wrapper_url: https://raw.githubusercontent.com/NVIDIA/nvidia-docker/master/nvidia-docker
+nvidia_docker_repo_list_url: "{{ nvidia_docker_repo_base_url }}/stable/deb/nvidia-container-toolkit.list"
+nvidia_docker_repo_repo_url: "{{ nvidia_docker_repo_base_url }}/stable/rpm/nvidia-container-toolkit.repo"
 nvidia_docker_add_repo: true
-nvidia_docker_install_wrapper: true
 nvidia_docker_skip_docker_reload: false
 
 # Replacing the reload var with the restart var, using this by default for
