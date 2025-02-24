@@ -1,60 +1,69 @@
 ---
 
 - name: Add NVIDIA libnvidia-container GPG key (APT)
-  apt_key:
+  ansible.builtin.apt_key:
     url: "{{ nvidia_docker_repo_gpg_url }}"
     state: present
   when: ansible_os_family == "Debian"
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
 - name: Fetch NVIDIA libnvidia-container APT repo file
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ nvidia_docker_repo_list_url }}"
     dest: /etc/apt/sources.list.d/nvidia-container-toolkit.list
     mode: "0644"
   when: ansible_os_family == "Debian"
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
 - name: Update apt cache
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
   when: ansible_os_family == "Debian"
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
 - name: Install NVIDIA container toolkit (APT)
-  apt:
+  ansible.builtin.apt:
     name: nvidia-container-toolkit
     state: present
   when: ansible_os_family == "Debian"
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
 - name: Import NVIDIA libnvidia-container GPG key (RPM)
-  rpm_key:
+  ansible.builtin.rpm_key:
     key: "{{ nvidia_docker_repo_gpg_url }}"
     state: present
   when: ansible_os_family == "RedHat"
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
 - name: Fetch NVIDIA libnvidia-container YUM repo file
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ nvidia_docker_repo_repo_url }}"
     dest: /etc/yum.repos.d/nvidia-container-toolkit.repo
     mode: "0644"
   when: ansible_os_family == "RedHat"
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
 - name: Install NVIDIA container toolkit (YUM)
-  yum:
+  ansible.builtin.yum:
     name: nvidia-container-toolkit
     state: present
   when: ansible_os_family == "RedHat"
-  environment: "{{proxy_env if proxy_env is defined else {}}}"
+  environment: "{{ proxy_env if proxy_env is defined else {} }}"
+  become: true
 
 - name: Configure Docker daemon for NVIDIA runtime
   command: nvidia-ctk runtime configure --runtime=docker
   notify: Restart Docker
+  become: true
 
 - name: Restart Docker service
-  service:
+  ansible.builtin.service:
     name: docker
     state: restarted
+  become: true

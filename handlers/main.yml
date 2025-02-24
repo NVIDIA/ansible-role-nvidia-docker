@@ -1,7 +1,8 @@
 ---
 - name: Restart Docker
-  service:
+  ansible.builtin.service:
     name: docker
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted
   when: not nvidia_docker_skip_docker_restart
+  become: true
