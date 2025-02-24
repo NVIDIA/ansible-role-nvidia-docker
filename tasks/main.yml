@@ -61,9 +61,3 @@
   command: nvidia-ctk runtime configure --runtime=docker
   notify: Restart Docker
   become: true
-
-- name: Restart Docker service
-  ansible.builtin.service:
-    name: docker
-    state: restarted
-  become: true
